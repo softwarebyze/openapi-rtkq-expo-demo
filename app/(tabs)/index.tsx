@@ -8,10 +8,17 @@ import { ThemedView } from "@/components/themed-view";
 import { Link } from "expo-router";
 import { useAppDispatch, useAppSelector } from "../store/store";
 import { increment, decrement } from "../store/counterSlice";
+import { useGetPetByIdQuery } from "../store/petApi";
 
 export default function HomeScreen() {
   const count = useAppSelector((state) => state.counter.value);
   const dispatch = useAppDispatch();
+  const { data: pet, isLoading, isError } = useGetPetByIdQuery({ petId: 1 });
+  const petName = isLoading
+    ? "loading..."
+    : isError
+      ? "error fetching pet"
+      : pet?.name;
 
   return (
     <ParallaxScrollView
@@ -30,6 +37,7 @@ export default function HomeScreen() {
       <Button title="Increment" onPress={() => dispatch(increment())} />
       <Button title="Decrement" onPress={() => dispatch(decrement())} />
       <Text>{`Count: ${count}`}</Text>
+      <Text>{`Pet: ${petName}`}</Text>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
